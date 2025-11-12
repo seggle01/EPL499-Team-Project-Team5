@@ -3,3 +3,4 @@ pandas
 textblob
 tqdm
 scikit-learn
+matplotlib
