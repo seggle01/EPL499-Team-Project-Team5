@@ -7,6 +7,16 @@ from typing import List, Callable
 
 random.seed(11)
 
+import html
+from twokenize import twokenize
+# Monkey patch the broken function
+def normalizeTextForTagger(text):
+    text = text.replace("&amp;", "&")
+    text = html.unescape(text)  # Use html.unescape instead
+    return text
+
+twokenize.normalizeTextForTagger = normalizeTextForTagger
+
 nltk.download('punkt', quiet=True)
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
@@ -16,7 +26,7 @@ _lem  = WordNetLemmatizer()
 _stem = PorterStemmer()
 
 def word_tokenize_sentence(sent: str) -> List[str]:
-    return nltk.word_tokenize(sent)
+    return twokenize.tokenizeRawTweetText(sent)
 
 def to_lower(tokens: List[str]) -> List[str]:
     return [token.lower() for token in tokens]

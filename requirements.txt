@@ -1,3 +1,5 @@
 twokenize
 pandas
 textblob
+tqdm
+scikit-learn
