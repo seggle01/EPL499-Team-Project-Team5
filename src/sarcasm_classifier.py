@@ -1,7 +1,6 @@
-# %% [markdown]
+
 # # Twitter Irony / Sarcasm Classification
 
-# %%
 import re
 import pandas as pd
 from textblob import TextBlob
@@ -91,43 +90,52 @@ def extract_features(text):
 # 3️⃣  Load Training and Test Datasets
 # ------------------------------------------------------------
 
-df_train = pd.read_csv("sarcasm_training.csv")  # your training CSV
-df_test  = pd.read_csv("sarcasm_test.csv")      # your test CSV
+# df_train = pd.read_csv("../data/sarcasm_training.csv")  # your training CSV
+# df_test  = pd.read_csv("../data/sarcasm_test.csv")      # your test CSV
 
-# Convert 'yes'/'no' to 1/0
-df_train["Sarcasm (yes/no)"] = df_train["Sarcasm (yes/no)"].map({"yes": 1, "no": 0})
-df_test["Sarcasm (yes/no)"]  = df_test["Sarcasm (yes/no)"].map({"yes": 1, "no": 0})
+# # Convert 'yes'/'no' to 1/0
+# df_train["Sarcasm (yes/no)"] = df_train["Sarcasm (yes/no)"].map({"yes": 1, "no": 0})
+# df_test["Sarcasm (yes/no)"]  = df_test["Sarcasm (yes/no)"].map({"yes": 1, "no": 0})
 
-X_train_texts = df_train["Tweet"].astype(str).tolist()
-y_train = df_train["Sarcasm (yes/no)"].tolist()
+# X_train_texts = df_train["Tweet"].astype(str).tolist()
+# y_train = df_train["Sarcasm (yes/no)"].tolist()
 
-X_test_texts = df_test["Tweet"].astype(str).tolist()
-y_test = df_test["Sarcasm (yes/no)"].tolist()
+# X_test_texts = df_test["Tweet"].astype(str).tolist()
+# y_test = df_test["Sarcasm (yes/no)"].tolist()
 
-# ------------------------------------------------------------
-# 4️⃣  Feature Extraction
-# ------------------------------------------------------------
+# # ------------------------------------------------------------
+# # 4️⃣  Feature Extraction
+# # ------------------------------------------------------------
 
-X_train_features = [extract_features(text) for text in X_train_texts]
-X_test_features  = [extract_features(text) for text in X_test_texts]
+# X_train_features = [extract_features(text) for text in X_train_texts]
+# X_test_features  = [extract_features(text) for text in X_test_texts]
 
-vec = DictVectorizer(sparse=False)
-X_train = vec.fit_transform(X_train_features)
-X_test  = vec.transform(X_test_features)
+# vec = DictVectorizer(sparse=False)
+# X_train = vec.fit_transform(X_train_features)
+# X_test  = vec.transform(X_test_features)
 
-# ------------------------------------------------------------
-# 5️⃣  Train Logistic Regression Model
-# ------------------------------------------------------------
+# # ------------------------------------------------------------
+# # 5️⃣  Train Logistic Regression Model
+# # ------------------------------------------------------------
 
-model = LogisticRegression(max_iter=1000)
-model.fit(X_train, y_train)
+# model = LogisticRegression(max_iter=1000)
+# model.fit(X_train, y_train)
 
-y_pred = model.predict(X_test)
+# import pickle
 
-# ------------------------------------------------------------
-# 6️⃣  Evaluation
-# ------------------------------------------------------------
+# # Save both the trained model and the vectorizer
+# with open("../data/sarcasm_model.pkl", "wb") as f:
+#     pickle.dump(model, f, protocol=5)
 
-print("Accuracy:", accuracy_score(y_test, y_pred))
-print("\nClassification report:")
-print(classification_report(y_test, y_pred))
+# with open("../data/dict_vectorizer.pkl", "wb") as f:
+#     pickle.dump(vec, f, protocol=5)
+
+# y_pred = model.predict(X_test)
+
+# # ------------------------------------------------------------
+# # 6️⃣  Evaluation
+# # ------------------------------------------------------------
+
+# print("Accuracy:", accuracy_score(y_test, y_pred))
+# print("\nClassification report:")
+# print(classification_report(y_test, y_pred))
