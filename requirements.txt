@@ -3,3 +3,7 @@ pandas
 textblob
 tqdm
 scikit-learn
+emoji
+spacy
+matplotlib
+seaborn
