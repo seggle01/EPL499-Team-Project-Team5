@@ -6,7 +6,7 @@ A comprehensive sentiment analysis system for classifying Twitter posts as posit
 
 ---
 
-## 👥 Team Members
+##  Team Members
 
 - Costas Frantzides
 - Vasilis Kynigaris
@@ -14,7 +14,7 @@ A comprehensive sentiment analysis system for classifying Twitter posts as posit
 
 ---
 
-## 📋 Project Overview
+##  Project Overview
 
 This project implements a robust sentiment classification pipeline for Twitter data. The system combines traditional machine learning approaches with modern NLP techniques to achieve high accuracy in distinguishing positive from negative sentiments in tweets.
 
@@ -66,7 +66,7 @@ The system extracts **four main categories** of features from Twitter text:
 
 ---
 
-## 🤖 Models Implemented
+##  Models Implemented
 
 ### Primary Model: **SGDClassifier (Stochastic Gradient Descent)**
 
@@ -93,7 +93,7 @@ The system extracts **four main categories** of features from Twitter text:
 
 ---
 
-## 📊 Key Results and Findings
+## Key Results and Findings
 
 ### Model Performance
 
@@ -152,7 +152,7 @@ The system extracts **four main categories** of features from Twitter text:
 
 ---
 
-## 🗂️ Project Structure
+##  Project Structure
 
 ```
 twitter-sentiment-classification/
@@ -182,7 +182,7 @@ twitter-sentiment-classification/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -198,40 +198,7 @@ cd src
 python main.py
 ```
 
-### Using Individual Modules
-
-```python
-from feature_extraction import count_positive_words, get_sentiment_and_subjectivity
-from text_cleaning import preprocessing_text
-from evaluation import evaluate_model
-
-# Example: Extract features from text
-text = "I love this amazing product! 😊"
-sentiment = get_sentiment_and_subjectivity(text, combined_sentiment_dict)
-print(sentiment)
-```
-
----
-
-## 📈 Future Improvements
-
-- [ ] Implement deep learning models (LSTM, BERT)
-- [ ] Add ensemble methods combining multiple classifiers
-- [ ] Expand feature set with word embeddings (Word2Vec, GloVe)
-- [ ] Real-time sentiment analysis API
-- [ ] Multi-class sentiment classification (positive, negative, neutral)
-- [ ] Cross-domain sentiment analysis (different social media platforms)
-- [ ] Improved sarcasm and irony detection
-
----
-
-## 📝 License
-
-*[Add your license information]*
-
----
-
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - spaCy for NLP processing
 - TextBlob for sentiment analysis
