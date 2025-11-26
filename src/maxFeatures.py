@@ -1,7 +1,7 @@
-# %% [markdown]
+
 # # Twitter Sentiment Classification: Positive vs. Negative
 
-# %%
+
 import pandas as pd
 
 df_train = pd.read_csv('../data/twitter_sentiment_train.csv')
@@ -11,7 +11,7 @@ df_test  = pd.read_csv('../data/twitter_sentiment_test.csv')
 RANDOM_STATE = 123
 df_train = df_train.sample(frac=1, random_state=RANDOM_STATE).reset_index(drop=True)
 
-# %%
+
 import numpy as np        # must be imported BEFORE joblib load
 from joblib import load
 
@@ -26,16 +26,16 @@ vec = load("../data/dict_vectorizer.joblib")
 
 
 
-# %%
+
 int_to_label = {1: 'Positive', 0: 'Negative'}
 
-# %%
+
 df_train.head(5)
 
-# %% [markdown]
+
 # ### Import libraries
 
-# %%
+
 import re
 import string
 import json
@@ -58,7 +58,7 @@ import nltk
 
 nlp = spacy.load("en_core_web_sm")
 
-# %%
+
 with open('../data/profanity.txt', 'r') as f: 
     profanity_words = f.readlines()
 profanity_words = [s.strip() for s in profanity_words]
@@ -84,11 +84,11 @@ with open("../data/emoticon_polarity.json", "r", encoding="utf-8") as f:
 combined_sentiment = {**emoji_json, **emoticon_json}
 
 
-# %%
+
 punct_list = ['!', '#', '@', '?', '"']
 
 
-# %% [markdown]
+
 # ### Feature Extraction Checklist
 # 
 # 1. Profanity words count
@@ -97,7 +97,7 @@ punct_list = ['!', '#', '@', '?', '"']
 # 3. Fully Capitalized
 # 4. Punctuations
 
-# %%
+
 def count_all_capital_tokens(text: str) -> dict:
     """
     Counts the number of fully capitalized tokens (all letters uppercase) in a given text.
@@ -448,7 +448,7 @@ def tweet_avg_word_length(text):
     }
 
 
-# %%
+
 def uncontract(text):
     text = re.sub(r"(\b)([Aa]re|[Cc]ould|[Dd]id|[Dd]oes|[Dd]o|[Hh]ad|[Hh]as|[Hh]ave|[Ii]s|[Mm]ight|[Mm]ust|[Ss]hould|[Ww]ere|[Ww]ould)n't", r"\1\2 not", text)
     text = re.sub(r"(\b)([Hh]e|[Ii]|[Ss]he|[Tt]hey|[Ww]e|[Ww]hat|[Ww]ho|[Yy]ou)'ll", r"\1\2 will", text)
@@ -537,7 +537,7 @@ def tfidf_features(training_data, test_data, ngram_range, max_features):
 
 tfidf_train, tfidf_test, vectorizer = tfidf_features(clean_text_train, clean_text_test, (1,2), 3100)
 
-# %%
+
 feature_functions = [
     lambda text: count_specified_punctuations(text, punct_list),
     lambda text: count_profanity_words(text, profanity_words),
@@ -599,7 +599,7 @@ X_test_final = X_test_combined
 
 X_train_final.head(5)
 
-# %%
+
 y_train = df_train['label']
 y_test = df_test['label']
 
@@ -617,7 +617,7 @@ y_pred = model.predict(X_test_final)
 
 print(classification_report(y_test, y_pred, target_names=['negative', 'positive']))
 
-# %%
+
 # Find misclassified examples
 misclassified_indices = y_test.index[y_test != y_pred].tolist()
 
@@ -639,7 +639,7 @@ for i, idx in enumerate(misclassified_indices[:50], 1):  # Show first 50
     print(f"  Predicted: {int_to_label[pred_label]}")
     print(f"  {'-'*76}\n")
 
-# %%
+
 # Train a Random Forest on your features
 model_rf = RandomForestClassifier(n_estimators=100, random_state=RANDOM_STATE)
 model_rf.fit(X_train_final, y_train)
