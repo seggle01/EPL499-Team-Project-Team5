@@ -1,16 +1,15 @@
 
-import nltk, random
+import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer, PorterStemmer
-
 from typing import List, Callable
-
-random.seed(11)
-
-import html
 from twokenize import twokenize
+from text_processing.word_normalization import *
+
+
 # Monkey patch the broken function
 def normalizeTextForTagger(text):
+    import html
     text = text.replace("&amp;", "&")
     text = html.unescape(text)  # Use html.unescape instead
     return text
@@ -167,3 +166,16 @@ def run_pipeline(text: str, steps: List[Callable]):
         preprocessed_sentences.append(tokenized_sentence)
 
     return preprocessed_sentences
+
+def preprocessing_text(text):
+    # Word normalization
+    text = clean_unicode(text)
+    text = remove_numbers(text)
+    text = uncontract(text)
+    text = convert_urls_emails(text)
+    # Classical preprocessing steps
+    text = word_tokenize_sentence(text)
+    text = to_lower(text)
+    text = remove_stopwords(text)
+    text = lemmatize(text)
+    return text
