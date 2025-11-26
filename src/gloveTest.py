@@ -2,6 +2,7 @@
 # Your original pipeline with TF-IDF replaced by GloVe Twitter 200d embeddings.
 import os
 import nltk
+import optuna
 import pandas as pd
 import numpy as np        # must be imported BEFORE joblib load
 from joblib import load
@@ -21,13 +22,11 @@ from nltk.tokenize import word_tokenize
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 nltk.download('opinion_lexicon')
 from nltk.corpus import opinion_lexicon
-
-# from sklearn.feature_extraction.text import TfidfVectorizer  # no longer used
 from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 from pre_processing import *   # your preprocessing helpers (word_tokenize_sentence, to_lower, etc.)
-import optuna
+
 
 
 positive_words = set(opinion_lexicon.positive())
@@ -109,7 +108,6 @@ def count_specified_punctuations(text: str, punct_list: list) -> dict:
         'total_repeated_punct': total_repeated
     }
 
-
 def count_profanity_words(text: str, profanity_list: list) -> dict:
     """
     Counts the number of profanity words in a given text using a predefined list.
@@ -173,7 +171,6 @@ def count_positive_words(text):
 def count_negative_words(text):
     tokens = word_tokenize(text.lower())
     return {'negative_word_count': sum(1 for t in tokens if t in negative_words)}
-
 
 def uppercase_ratio(text):
     total_letters = sum(1 for c in text if c.isalpha())
@@ -419,8 +416,6 @@ def tweet_avg_word_length(text):
         "polarity_flip_ratio": polarity_flip_ratio
     }
 
-
-
 def uncontract(text):
     text = re.sub(r"(\b)([Aa]re|[Cc]ould|[Dd]id|[Dd]oes|[Dd]o|[Hh]ad|[Hh]as|[Hh]ave|[Ii]s|[Mm]ight|[Mm]ust|[Ss]hould|[Ww]ere|[Ww]ould)n't", r"\1\2 not", text)
     text = re.sub(r"(\b)([Hh]e|[Ii]|[Ss]he|[Tt]hey|[Ww]e|[Ww]hat|[Ww]ho|[Yy]ou)'ll", r"\1\2 will", text)
@@ -511,24 +506,24 @@ tfidf_train, tfidf_test, vectorizer = tfidf_features(clean_text_train, clean_tex
 
 
 feature_functions = [
-    lambda text: count_specified_punctuations(text, punct_list),
-    lambda text: count_profanity_words(text, profanity_words),
-    lambda text: count_slang_words(text, slang_words),   
+    # lambda text: count_specified_punctuations(text, punct_list),
+    # lambda text: count_profanity_words(text, profanity_words),
+    # lambda text: count_slang_words(text, slang_words),   
     count_all_capital_tokens,
     count_not,
-    count_sad_emoticons,
-    count_happy_emoticons,
-    count_elongated_words,
-    count_positive_words,
-    count_negative_words,
-    uppercase_ratio,
-    count_pos_tags,
-    count_named_entities,
-    get_sentiment_and_subjectivity,
-    get_hashtag_polarities,
-    predict_sarcasm,
-    tweet_word_count,
-    tweet_avg_word_length,
+    # count_sad_emoticons,
+    # count_happy_emoticons,
+    # count_elongated_words,
+    # count_positive_words,
+    # count_negative_words,
+    # uppercase_ratio,
+    # count_pos_tags,
+    # count_named_entities,
+    # get_sentiment_and_subjectivity,
+    # get_hashtag_polarities,
+    # predict_sarcasm,
+    # tweet_word_count,
+    # tweet_avg_word_length,
 ]
 # ---------------------------
 # 3) Your cleaning/tokenized variables (unchanged)
@@ -618,30 +613,11 @@ print("Final feature shapes:", X_train_final.shape, X_test_final.shape)
 # ---------------------------
 # 7) Optuna objective & optimization for SGD (unchanged)
 # ---------------------------
-def objective(trial):
-    alpha = trial.suggest_float('alpha', 1e-5, 1e-1, log=True)
-    eta0 = trial.suggest_float('eta0', 1e-3, 0.5, log=True)
-    learning_rate = trial.suggest_categorical('learning_rate', ['constant', 'optimal', 'invscaling', 'adaptive'])
-    model = SGDClassifier(
-        loss='log_loss',
-        alpha=alpha,
-        eta0=eta0,
-        learning_rate=learning_rate,
-        max_iter=5000,
-        random_state=RANDOM_STATE,
-        tol=1e-3
-    )
-    score = cross_val_score(model, X_train_final, y_train, cv=3, scoring='f1_macro', n_jobs=-1).mean()
-    return score
+from OptunaHyperparameterTuning import optuna_hyperparameter_search
 
-study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=100)
+best_params = optuna_hyperparameter_search(X_train_final,y_train,RANDOM_STATE,n_trials=10)
 
-print("Best trial:")
-print("F1_macro:", study.best_trial.value)
-print("Params:", study.best_trial.params)
 
-best_params = study.best_trial.params
 final_model = SGDClassifier(
     loss='log_loss',
     alpha=best_params['alpha'],
