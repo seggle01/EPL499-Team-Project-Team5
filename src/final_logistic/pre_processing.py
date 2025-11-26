@@ -25,36 +25,139 @@ nltk.download('punkt_tab', quiet=True)
 _lem  = WordNetLemmatizer()
 _stem = PorterStemmer()
 
-def word_tokenize_sentence(sent: str) -> List[str]:
+def word_tokenize_sentence(sent: str):
+    """
+    Tokenizes a sentence into words using the twokenize library.
+    
+    Parameters
+    ----------
+    sent : str
+        The input sentence to be tokenized.
+
+    Returns
+    ----------
+    List[str] : A list of tokens extracted from the sentence.
+        
+    """
+    
     return twokenize.tokenizeRawTweetText(sent)
 
-def to_lower(tokens: List[str]) -> List[str]:
+def to_lower(tokens: List[str]):
+    """
+    Converts all tokens in the list to lowercase.
+
+    Parameters
+    ----------
+    tokens : List[str]
+        A list of string tokens.
+
+    Returns
+    ----------  
+    List[str] : A list of tokens converted to lowercase.    
+
+    """
     return [token.lower() for token in tokens]
 
-def remove_punct_digits(tokens: List[str]) -> List[str]:
+def remove_punct_digits(tokens: List[str]):
+    """
+    Removes tokens that contain non-alphabetic characters.
+
+    Parameters
+    ----------
+    tokens : List[str]
+        A list of string tokens.
+
+    Returns
+    ----------
+    List[str] : A list of tokens with only alphabetic characters.    
+
+    """
     return [token for token in tokens if token.isalpha()]
 
-def remove_stopwords(tokens: List[str]) -> List[str]:
+def remove_stopwords(tokens: List[str]):
+    """
+    Removes common English stopwords from the list of tokens.
+    
+    Parameters
+    ----------
+    tokens : List[str]
+        A list of string tokens.
+
+    Returns
+    ----------
+    List[str] : A list of tokens with stopwords removed.
+    """
     stop_words = set(stopwords.words('english'))
     return [token for token in tokens if token not in stop_words]
 
-def lemmatize(tokens: List[str]) -> List[str]:
+def lemmatize(tokens: List[str]):
+    """
+    Lemmatizes each token in the list using WordNetLemmatizer.
+
+    Parameters
+    ----------
+    tokens : List[str]
+        A list of string tokens.
+    
+    Returns
+    ----------
+    List[str] : A list of lemmatized tokens.
+
+    """
     return [_lem.lemmatize(token) for token in tokens]
 
-def stem(tokens: List[str]) -> List[str]:
+def stem(tokens: List[str]):
+    """
+    Stems each token in the list using PorterStemmer.
+
+    Parameters
+    ----------
+    tokens : List[str]
+        A list of string tokens.
+   
+    Returns
+    ----------
+    List[str] : A list of stemmed tokens.
+
+    """
     return [_stem.stem(token) for token in tokens]
 
-def apply_steps_to_sentence(sent: str, steps: List[Callable]) -> List[str]:
-    # Apply the provided list of functions in order
+def apply_steps_to_sentence(sent: str, steps: List[Callable]):
+    """
+    Applies a series of preprocessing steps to a single sentence.
+
+    Parameters
+    ----------
+    sent : str
+        The input sentence to be processed.
+    steps : List[Callable]
+        A list of functions representing the preprocessing steps to be applied. 
+
+    Returns
+    ----------
+    List[str] : The processed list of tokens after applying all steps.
+    
+    """
     tokens = sent
     for step in steps:
         tokens = step(tokens)
     return tokens
 
-def run_pipeline(text: str, steps: List[Callable]) -> List[List[str]]:
+def run_pipeline(text: str, steps: List[Callable]):
     """
-    Processes a single text string by first tokenizing it into sentences,
-    then applying the specified pipeline steps to each sentence.
+    Runs a preprocessing pipeline on the input text.
+
+    Parameters
+    ----------
+    text : str
+        The input text to be processed. 
+    steps : List[Callable]
+        A list of functions representing the preprocessing steps to be applied.
+
+    Returns
+    ----------
+    List[List[str]] : A list of lists, where each inner list contains the processed tokens of a sentence.
+
     """
     sentences              = nltk.sent_tokenize(text)
     preprocessed_sentences = []
