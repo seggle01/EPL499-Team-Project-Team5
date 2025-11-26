@@ -1,8 +1,6 @@
 import re
 from textblob import TextBlob
 
-
-
 def count_punctuation(text):
     """
     Counts the number of exclamation marks, question marks, and dots in the input text.
