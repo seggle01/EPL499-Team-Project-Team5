@@ -405,7 +405,7 @@ def predict_sarcasm(tweet: str, vec, model):
     dict : Dictionary of the form {'sarcasm_score': probability}
            where probability is the sarcasm likelihood score (0.0 to 1.0)
     """
-    from final_logistic.features.sarcasm_classifier import extract_features
+    from features.sarcasm_classifier import extract_features
     
     # Extract features from tweet
     features = extract_features(tweet)
