@@ -1,8 +1,9 @@
 import re
-from pre_processing import *
-from textblob import TextBlob
 import spacy
 import emoji
+from textblob import TextBlob
+import pandas as pd
+from pre_processing import *
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -411,7 +412,7 @@ def get_hashtag_polarities(text: str):
             "hashtag_count": 0
         }
 
-def predict_sarcasm(tweet: str, vec_path: str, model):
+def predict_sarcasm(tweet: str, vec, model):
     """
     Method to predict if a tweet is sarcastic using a pre-trained classifier.
 
@@ -419,6 +420,10 @@ def predict_sarcasm(tweet: str, vec_path: str, model):
     ----------
     tweet : str
         The tweet text to classify for sarcasm.
+    vec : DictVectorizer
+        Pre-loaded DictVectorizer for feature transformation.
+    model : sklearn classifier
+        Pre-loaded trained classifier model.
     
     Returns
     -------
@@ -426,13 +431,11 @@ def predict_sarcasm(tweet: str, vec_path: str, model):
            where probability is the sarcasm likelihood score (0.0 to 1.0)
     """
     from sarcasm_classifier import extract_features
-    from joblib import load
-
-    # Extract features
-    features = extract_features(tweet)
-    vec = load(vec_path)
     
-    # Transform to model input format
+    # Extract features from tweet
+    features = extract_features(tweet)
+    
+    # Transform to model input format (vec is already loaded)
     X = vec.transform([features])
     
     # Get prediction and probability
@@ -477,3 +480,31 @@ def tweet_avg_word_length(text: str):
         return {'avg_word_length': sum(len(w) for w in words) / len(words)}
     else:
         return {'avg_word_length': 0}
+
+def tfidf_features(training_data, test_data, ngram_range, max_features):
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    
+    tfidf = TfidfVectorizer(
+        ngram_range  = ngram_range,
+        max_features = max_features,
+        lowercase    = False,
+        tokenizer    = None,
+        preprocessor = None,
+        stop_words   = None,
+        min_df       = 10,
+        max_df       = 0.90
+        )
+
+    tfidf_train = tfidf.fit_transform(training_data)
+
+    tfidf_train = tfidf_train.toarray()
+    tfidf_train = pd.DataFrame(tfidf_train)
+    tfidf_train.columns = tfidf.get_feature_names_out()
+
+    tfidf_test = tfidf.transform(test_data)
+
+    tfidf_test = tfidf_test.toarray()
+    tfidf_test = pd.DataFrame(tfidf_test)
+    tfidf_test.columns = tfidf.get_feature_names_out()
+
+    return tfidf_train, tfidf_test, tfidf
