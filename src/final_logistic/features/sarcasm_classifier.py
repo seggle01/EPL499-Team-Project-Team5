@@ -3,7 +3,7 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, accuracy_score
 
-from sarcasm_feature_extraction import *
+from features.sarcasm_feature_extraction import *
 
 def extract_features(text):
     """

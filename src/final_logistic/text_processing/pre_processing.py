@@ -4,7 +4,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer, PorterStemmer
 from typing import List, Callable
 from twokenize import twokenize
-from word_normalization import *
+from text_processing.word_normalization import *
 
 
 # Monkey patch the broken function

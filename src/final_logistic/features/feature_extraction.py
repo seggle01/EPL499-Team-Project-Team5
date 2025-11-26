@@ -3,7 +3,7 @@ import spacy
 import emoji
 from textblob import TextBlob
 import pandas as pd
-from pre_processing import *
+from text_processing.pre_processing import *
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -387,31 +387,6 @@ def count_named_entities(text: str):
 
     return ner_counts
 
-def get_hashtag_polarities(text: str):
-    """
-    Method to extract hashtags and compute their sentiment polarities.
-
-    Parameters
-    ----------
-    text : str
-        Text containing hashtags to analyze.
-    
-    Returns
-    -------
-    dict : Dictionary of the form {'hashtag_count': count}
-    """
-    hashtags = re.findall(r"#\w+", text)
-    polarities = [TextBlob(tag[1:]).sentiment.polarity for tag in hashtags]
-    
-    if polarities:
-        return {
-            "hashtag_count": len(polarities)
-        }
-    else:
-        return {
-            "hashtag_count": 0
-        }
-
 def predict_sarcasm(tweet: str, vec, model):
     """
     Method to predict if a tweet is sarcastic using a pre-trained classifier.
@@ -430,7 +405,7 @@ def predict_sarcasm(tweet: str, vec, model):
     dict : Dictionary of the form {'sarcasm_score': probability}
            where probability is the sarcasm likelihood score (0.0 to 1.0)
     """
-    from sarcasm_classifier import extract_features
+    from final_logistic.features.sarcasm_classifier import extract_features
     
     # Extract features from tweet
     features = extract_features(tweet)
