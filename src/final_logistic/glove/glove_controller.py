@@ -3,7 +3,7 @@ from tqdm import tqdm
 import pickle
 from pathlib import Path
 
-def load_glove(path, EMBED_DIM, use_cache=True):
+def load_glove(glove_path, EMBED_DIM, use_cache=True, pickle_path='./glove/glove.pkl'):
     """
     Load GloVe word embeddings from file into a dictionary with caching.
     
@@ -23,7 +23,7 @@ def load_glove(path, EMBED_DIM, use_cache=True):
         Only includes vectors that match the specified EMBED_DIM.
     """
     # Create cache filename based on original file
-    cache_path = Path('./glove/glove').with_suffix('.pkl')
+    cache_path = Path(pickle_path).with_suffix('.pkl')
     
     # Try to load from cache first
     if use_cache and cache_path.exists():
@@ -34,10 +34,10 @@ def load_glove(path, EMBED_DIM, use_cache=True):
         return glove
     
     # Load from original text file
-    print(f"Loading GloVe from text file: {path}")
+    print(f"Loading GloVe from text file: {glove_path}")
     glove = {}
     
-    with open(path, 'r', encoding='utf8') as f:
+    with open(glove_path, 'r', encoding='utf8') as f:
         for line in tqdm(f, desc="Loading GloVe"):
             parts = line.rstrip().split(' ')
             word = parts[0]
