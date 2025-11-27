@@ -7,3 +7,5 @@ emoji
 spacy
 matplotlib
 seaborn
+
+torch==2.7.1+cu128
